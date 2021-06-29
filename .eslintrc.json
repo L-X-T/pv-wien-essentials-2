@@ -1,0 +1,57 @@
+{
+  "root": true,
+  "ignorePatterns": ["coverage/*", "dist/*", "node_modules/*", "tools/*"],
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["tsconfig.json", "cypress/tsconfig.json"],
+        "createDefaultProgram": true
+      },
+      "extends": [
+        "eslint:recommended",
+        "plugin:@angular-eslint/recommended",
+        "plugin:@typescript-eslint/eslint-recommended",
+        "plugin:@typescript-eslint/recommended",
+        "plugin:prettier/recommended",
+        "plugin:@angular-eslint/recommended--extra"
+      ],
+      "rules": {
+        "@angular-eslint/component-selector": [
+          "error",
+          {
+            "type": "element",
+            "prefix": "",
+            "style": "kebab-case"
+          }
+        ],
+        "@angular-eslint/directive-selector": [
+          "error",
+          {
+            "type": "attribute",
+            "prefix": "",
+            "style": "camelCase"
+          }
+        ],
+        "@angular-eslint/no-empty-lifecycle-method": "warn",
+        "@typescript-eslint/naming-convention": [
+          "warn",
+          {
+            "selector": "variable",
+            "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          }
+        ],
+        "@typescript-eslint/no-empty-function": "warn",
+        "@typescript-eslint/no-empty-interface": "error",
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-unused-vars": "off",
+        "valid-typeof": "error"
+      }
+    },
+    {
+      "files": ["*.html"],
+      "extends": ["plugin:@angular-eslint/template/recommended"],
+      "rules": {}
+    }
+  ]
+}
