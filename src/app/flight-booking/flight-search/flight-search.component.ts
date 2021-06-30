@@ -1,7 +1,7 @@
 import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { Flight } from '../entities/flight';
+import { Flight } from '../../entities/flight';
 import { FlightService } from './flight.service';
 import { Observable, Observer, pipe, Subject, Subscription } from 'rxjs';
 import { share, takeUntil } from 'rxjs/operators';
