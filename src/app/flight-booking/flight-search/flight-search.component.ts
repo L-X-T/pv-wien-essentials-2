@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Flight } from '../../entities/flight';
@@ -11,9 +11,9 @@ import { share, takeUntil } from 'rxjs/operators';
   templateUrl: './flight-search.component.html',
   styleUrls: ['./flight-search.component.css']
 })
-export class FlightSearchComponent implements OnDestroy {
-  from = 'Graz';
-  to = 'Hamburg';
+export class FlightSearchComponent implements OnInit, OnDestroy {
+  from = 'Hamburg';
+  to = 'Graz';
 
   flights: Flight[] = [];
   flights$: Observable<Flight[]> | undefined;
@@ -28,6 +28,17 @@ export class FlightSearchComponent implements OnDestroy {
 
   private readonly onDestroySubject = new Subject<void>();
   readonly terminator$ = this.onDestroySubject.asObservable();
+
+  basket: { [id: number]: boolean } = {
+    3: true,
+    5: true
+  };
+
+  ngOnInit(): void {
+    if (this.from && this.to) {
+      this.search();
+    }
+  }
 
   search(): void {
     // 1. my observable
