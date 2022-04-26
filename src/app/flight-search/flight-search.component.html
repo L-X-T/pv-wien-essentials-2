@@ -25,31 +25,60 @@
 </div>
 
 <div class="card">
-  <table class="table table-contensed" *ngIf="flights.length > 0">
-    <thead>
-      <tr>
-        <th>Id</th>
-        <th>From</th>
-        <th>To</th>
-        <th>Date</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let f of flights"
-          [class.active]="f === selectedFlight">
-        <td>{{ f.id }}</td>
-        <td>{{ f.from | city:'short' }}</td>
-        <td>{{ f.to | city:'long' }}</td>
-        <td>{{ f.date | date:'dd.MM.yyyy HH:mm' }}</td>
-        <td>
-          <a (click)="select(f)">Select</a>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="content">
+    <table class="table table-contensed" *ngIf="flights.length > 0">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of flights"
+            [class.active]="f.id === selectedFlight?.id">
+          <td>{{ f.id }}</td>
+          <td>{{ f.from | city:'short' }}</td>
+          <td>{{ f.to | city:'long' }}</td>
+          <td>{{ f.date | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td>
+            <a (click)="select(f)">Select</a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 
+<div *ngIf="flights$ | async as asyncFlights" class="card">
+  <div class="content">
+    <table class="table table-contensed" *ngIf="asyncFlights.length > 0">
+      <thead>
+        <tr>
+          <th>Async</th>
+          <th>From</th>
+          <th>To</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of asyncFlights"
+            [class.active]="f.id === selectedFlight?.id">
+          <td>{{ f.id }}</td>
+          <td>{{ f.from | city:'short' }}</td>
+          <td>{{ f.to | city:'long' }}</td>
+          <td>{{ f.date | date:'dd.MM.yyyy HH:mm' }}</td>
+          <td>
+            <a (click)="select(f)">Select</a>
+          </td>
+        </tr>
+      </tbody>
+     </table>
+  </div>
+</div>
 
 <div class="card">
   <div class="content">
@@ -59,7 +88,6 @@
 
 
 <div *ngIf="selectedFlight">
-
   <div>
     {{ message }}
   </div>
@@ -85,5 +113,4 @@
   </div>
 
   <button (click)="save()" class="btn btn-default">Save</button>
-
 </div>
