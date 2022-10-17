@@ -12,7 +12,6 @@ export class FlightCardComponent implements OnInit, OnChanges {
 
   @Input({ required: true }) item!: Flight;
   @Input() isSelected = false;
-  @Output() isSelectedChange = new EventEmitter<boolean>();
 
   ngOnChanges(): void {
     if (this.debug) {
@@ -28,23 +27,5 @@ export class FlightCardComponent implements OnInit, OnChanges {
       console.log(this.item);
       console.log('isSelected: ' + this.isSelected);
     }
-  }
-
-  select(): void {
-    // this.isSelected = true;
-    if (this.debug) {
-      console.warn('[FlightCardComponent - select()]');
-      console.log('isSelected: ' + true);
-    }
-    this.isSelectedChange.emit(true);
-  }
-
-  deselect(): void {
-    // this.isSelected = false;
-    if (this.debug) {
-      console.warn('[FlightCardComponent - deselect()]');
-      console.log('isSelected: ' + false);
-    }
-    this.isSelectedChange.emit(false);
   }
 }

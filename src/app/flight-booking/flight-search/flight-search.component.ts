@@ -92,4 +92,9 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
         });
     }
   }
+
+  onClick(flight: Flight) {
+    this.basket[flight.id] = !this.basket[flight.id];
+    this.selectedFlight = this.basket[flight.id] ? flight : null;
+  }
 }
