@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 
 import { Flight } from '../../entities/flight';
 
@@ -7,11 +7,18 @@ import { Flight } from '../../entities/flight';
   templateUrl: './flight-card.component.html',
   styleUrls: ['./flight-card.component.css']
 })
-export class FlightCardComponent implements OnInit, OnChanges {
-  debug = false;
+export class FlightCardComponent implements OnInit, OnChanges, OnDestroy {
+  debug = true;
 
   @Input({ required: true }) item!: Flight;
   @Input() isSelected = false;
+
+  constructor() {
+    if (this.debug) {
+      console.warn('[FlightCardComponent - constructor()]');
+      console.log(this.item);
+    }
+  }
 
   ngOnChanges(): void {
     if (this.debug) {
@@ -26,6 +33,13 @@ export class FlightCardComponent implements OnInit, OnChanges {
       console.warn('[FlightCardComponent - ngOnInit()]');
       console.log(this.item);
       console.log('isSelected: ' + this.isSelected);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.debug) {
+      console.error('[FlightCardComponent - ngOnDestroy()]');
+      console.log(this.item);
     }
   }
 }

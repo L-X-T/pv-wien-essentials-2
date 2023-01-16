@@ -97,4 +97,12 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
     this.basket[flight.id] = !this.basket[flight.id];
     this.selectedFlight = this.basket[flight.id] ? flight : null;
   }
+
+  trackById(index: number, flight: Flight): number {
+    return flight.id;
+  }
+
+  removeSecondFlight() {
+    this.flights = [{ ...this.flights[0] }, ...this.flights.slice(2)];
+  }
 }
