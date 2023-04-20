@@ -4,20 +4,36 @@
     <input formControlName="id" class="form-control">
   </div>
 
+  <app-flight-validation-errors *ngIf="editForm.controls['id']?.dirty"
+                                fieldLabel="Id"
+                                [errors]="editForm.controls['id'].errors" />
+
   <div class="form-group">
     <label>From:</label>
     <input formControlName="from" class="form-control">
   </div>
+
+  <app-flight-validation-errors *ngIf="editForm.controls['from']?.dirty"
+                                fieldLabel="From"
+                                [errors]="editForm.controls['from'].errors" />
 
   <div class="form-group">
     <label>To:</label>
     <input formControlName="to" class="form-control">
   </div>
 
+  <app-flight-validation-errors *ngIf="editForm.controls['to']?.dirty"
+                                fieldLabel="To"
+                                [errors]="editForm.controls['to'].errors" />
+
   <div class="form-group">
     <label>Date:</label>
     <input formControlName="date" class="form-control">
   </div>
+
+  <app-flight-validation-errors *ngIf="editForm.controls['date']?.dirty"
+                                fieldLabel="Date"
+                                [errors]="editForm.controls['date'].errors" />
 
   <div class="form-group">
     <button (click)="save()" class="btn btn-default">Save</button>
