@@ -1,4 +1,5 @@
-import { Component, DestroyRef, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Flight } from '../../entities/flight';
@@ -12,6 +13,8 @@ import { share, takeUntil } from 'rxjs/operators';
   styleUrls: ['./flight-search.component.css']
 })
 export class FlightSearchComponent implements OnInit, OnDestroy {
+  @ViewChild('flightSearchForm') flightSearchForm?: FormGroup;
+
   from = 'Hamburg';
   to = 'Graz';
 
@@ -44,6 +47,11 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
   }
 
   search(): void {
+    if (this.flightSearchForm && (!this.from || !this.to || this.flightSearchForm.invalid)) {
+      this.markFormGroupDirty(this.flightSearchForm);
+      return;
+    }
+
     // 1. my observable
     this.flights$ = this.flightService.find(this.from, this.to).pipe(share());
 
@@ -74,6 +82,10 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
     // 4b. subject emit thru terminator$
     this.onDestroySubject.next(void 0);
     this.onDestroySubject.complete();
+  }
+
+  private markFormGroupDirty(formGroup: FormGroup): void {
+    Object.values(formGroup.controls).forEach((c) => c.markAsDirty());
   }
 
   select(f: Flight): void {
