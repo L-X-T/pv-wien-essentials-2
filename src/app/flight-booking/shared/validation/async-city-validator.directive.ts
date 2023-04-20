@@ -21,8 +21,8 @@ export class AsyncCityValidatorDirective implements AsyncValidator {
 
   validate(c: AbstractControl): Observable<ValidationErrors | null> {
     return this.flightService.find(c.value, '').pipe(
-      map((flights) => (flights.length > 0 ? null : { asyncCity: c.value })),
-      delay(2000) // <-- delay; can be removed later...
+      map((flights) => (flights.length > 0 ? null : { asyncCity: c.value }))
+      // delay(2000) // <-- delay; can be removed later...
     );
   }
 }
