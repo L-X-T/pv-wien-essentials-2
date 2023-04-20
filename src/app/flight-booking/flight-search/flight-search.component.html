@@ -16,7 +16,7 @@
                [minlength]="minLength"
                [maxlength]="maxLength"
                pattern="[a-zA-ZäöüÄÖÜß ]*"
-               city>
+               [city]="['Graz', 'Salzburg', 'Hamburg', 'München']">
       </div>
 
       <app-flight-validation-errors *ngIf="flightSearchForm.controls['from']?.dirty"
@@ -33,7 +33,7 @@
                [minlength]="minLength"
                [maxlength]="maxLength"
                pattern="[a-zA-ZäöüÄÖÜß ]*"
-               city>
+               [city]="['Graz', 'Salzburg', 'Hamburg', 'München']">
       </div>
 
       <app-flight-validation-errors *ngIf="flightSearchForm.controls['to']?.dirty"
