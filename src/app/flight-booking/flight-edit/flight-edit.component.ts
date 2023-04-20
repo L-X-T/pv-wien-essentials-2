@@ -7,6 +7,7 @@ import { Flight } from '../../entities/flight';
 import { FlightService } from '../flight-search/flight.service';
 import { validateCity } from '../shared/validation/city-validator';
 import { validateAsyncCity } from '../shared/validation/async-city-validator';
+import { validateRoundTrip } from '../shared/validation/round-trip-validator';
 
 @Component({
   selector: 'app-flight-edit',
@@ -16,54 +17,62 @@ import { validateAsyncCity } from '../shared/validation/async-city-validator';
 export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   @Input() flight: Flight | undefined | null;
 
-  editForm: FormGroup = this.fb.group({
-    id: [
-      0,
-      {
-        validators: [Validators.required],
-        updateOn: 'blur'
-      }
-    ],
-    from: [
-      '',
-      {
-        asyncValidators: [validateAsyncCity(this.flightService)],
-        validators: [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(15),
-          validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
-        ],
-        updateOn: 'blur'
-      }
-    ],
-    to: [
-      '',
-      {
-        validators: [
-          Validators.required,
-          Validators.minLength(3),
-          Validators.maxLength(15),
-          validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
-        ],
-        updateOn: 'blur'
-      }
-    ],
-    date: [
-      '',
-      {
-        validators: [Validators.required, Validators.minLength(33), Validators.maxLength(33)],
-        updateOn: 'blur'
-      }
-    ]
-  });
+  editForm: FormGroup = this.fb.group(
+    {
+      id: [
+        0,
+        {
+          validators: [Validators.required],
+          updateOn: 'blur'
+        }
+      ],
+      from: [
+        '',
+        {
+          asyncValidators: [validateAsyncCity(this.flightService)],
+          validators: [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(15),
+            validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
+          ],
+          updateOn: 'blur'
+        }
+      ],
+      to: [
+        '',
+        {
+          validators: [
+            Validators.required,
+            Validators.minLength(3),
+            Validators.maxLength(15),
+            validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
+          ],
+          updateOn: 'blur'
+        }
+      ],
+      date: [
+        '',
+        {
+          validators: [Validators.required, Validators.minLength(33), Validators.maxLength(33)],
+          updateOn: 'blur'
+        }
+      ]
+    },
+    {
+      validators: validateRoundTrip
+    }
+  );
 
   message = '';
 
   private valueChangesSubscription?: Subscription;
   private saveFlightSubscription?: Subscription;
 
-  constructor(private fb: FormBuilder, private flightService: FlightService) {}
+  constructor(
+    private fb: FormBuilder,
+    private flightService: FlightService
+  ) {}
 
   ngOnChanges(): void {
     if (this.flight) {
