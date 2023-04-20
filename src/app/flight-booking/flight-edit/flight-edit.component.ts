@@ -8,6 +8,7 @@ import { FlightService } from '../flight-search/flight.service';
 import { validateCity } from '../shared/validation/city-validator';
 import { validateAsyncCity } from '../shared/validation/async-city-validator';
 import { validateRoundTrip } from '../shared/validation/round-trip-validator';
+import { pattern } from '../../shared/global';
 
 @Component({
   selector: 'app-flight-edit',
@@ -17,6 +18,8 @@ import { validateRoundTrip } from '../shared/validation/round-trip-validator';
 export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   @Input() flight: Flight | undefined | null;
   @Output() flightChange = new EventEmitter<Flight>();
+
+  private pattern = pattern;
 
   editForm: FormGroup = this.fb.group(
     {
@@ -35,6 +38,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
             Validators.required,
             Validators.minLength(3),
             Validators.maxLength(15),
+            Validators.pattern(this.pattern),
             validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
           ],
           updateOn: 'blur'
@@ -47,6 +51,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
             Validators.required,
             Validators.minLength(3),
             Validators.maxLength(15),
+            Validators.pattern(this.pattern),
             validateCity(['Graz', 'Wien', 'Hamburg', 'Berlin'])
           ],
           updateOn: 'blur'

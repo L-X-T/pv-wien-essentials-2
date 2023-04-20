@@ -6,6 +6,7 @@ import { Flight } from '../../entities/flight';
 import { FlightService } from './flight.service';
 import { Observable, Observer, pipe, Subject, Subscription } from 'rxjs';
 import { share, takeUntil } from 'rxjs/operators';
+import { pattern } from '../../shared/global';
 
 @Component({
   selector: 'app-flight-search',
@@ -27,6 +28,7 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
 
   selectedFlight: Flight | undefined | null;
   flightToEdit: Flight | undefined | null;
+  pattern = pattern;
 
   message = '';
 
