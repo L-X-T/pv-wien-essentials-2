@@ -3,7 +3,7 @@ import { FormGroup } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Flight } from '../../entities/flight';
-import { FlightService } from './flight.service';
+import { FlightService } from '../shared/services/flight.service';
 import { Observable, Observer, pipe, Subject, Subscription } from 'rxjs';
 import { share, takeUntil } from 'rxjs/operators';
 import { pattern } from '../../shared/global';

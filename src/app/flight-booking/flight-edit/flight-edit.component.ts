@@ -1,12 +1,12 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Params } from '@angular/router';
 
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 
 import { Flight } from '../../entities/flight';
-import { FlightService } from '../flight-search/flight.service';
+import { FlightService } from '../shared/services/flight.service';
 import { validateCity } from '../shared/validation/city-validator';
 import { validateAsyncCity } from '../shared/validation/async-city-validator';
 import { validateRoundTrip } from '../shared/validation/round-trip-validator';
@@ -87,9 +87,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   ) {}
 
   ngOnChanges(): void {
-    if (this.flight) {
-      this.editForm.patchValue(this.flight);
-    }
+    this.patchFormValue();
   }
 
   ngOnInit(): void {
@@ -104,10 +102,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
         }
       });
 
-    this.route.params.subscribe((params) => {
-      this.id = params['id'];
-      this.showDetails = params['showDetails'];
-    });
+    this.route.params.subscribe((params) => this.onRouteParams(params));
   }
 
   ngOnDestroy(): void {
@@ -123,15 +118,39 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
         }
 
         this.flightChange.emit(flight);
-
-        this.message = 'Success!';
+        this.flight = flight;
+        this.message = 'Success saving!';
+        this.patchFormValue();
       },
       error: (err: HttpErrorResponse) => {
         if (this.debug) {
           console.error('Error', err);
         }
 
-        this.message = 'Error!';
+        this.message = 'Error saving!';
+      }
+    });
+  }
+
+  private patchFormValue(): void {
+    if (this.editForm && this.flight) {
+      this.editForm.patchValue(this.flight);
+    }
+  }
+
+  private onRouteParams(params: Params) {
+    this.id = params['id'];
+    this.showDetails = params['showDetails'];
+
+    this.flightService.findById(this.id).subscribe({
+      next: (flight) => {
+        this.flight = flight;
+        this.message = 'Success loading!';
+        this.patchFormValue();
+      },
+      error: (err: HttpErrorResponse) => {
+        console.error('Error', err);
+        this.message = 'Error Loading!';
       }
     });
   }
