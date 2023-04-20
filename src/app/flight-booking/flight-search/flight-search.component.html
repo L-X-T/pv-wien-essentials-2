@@ -12,20 +12,14 @@
                name="from"
                class="form-control"
                required="required"
-               minlength="3"
-               maxlength="15"
+               [minlength]="minLength"
+               [maxlength]="maxLength"
                pattern="[a-zA-ZäöüÄÖÜß ]*">
       </div>
 
-      <div *ngIf="flightSearchForm.controls['from']?.invalid"> From is invalid. </div>
-
-      <div *ngIf="flightSearchForm.controls['from']?.hasError('required')"> From is required. </div>
-
-      <div *ngIf="flightSearchForm.controls['from']?.hasError('minlength')"> From minlength is 3. </div>
-
-      <div *ngIf="flightSearchForm.controls['from']?.hasError('maxlength')"> From maxlength is 15. </div>
-
-      <div *ngIf="flightSearchForm.controls['from']?.hasError('pattern')"> From has invalid input. </div>
+      <app-flight-validation-errors *ngIf="flightSearchForm.controls['from']"
+                                    [errors]="flightSearchForm.controls['from'].errors"
+                                    fieldLabel="From" />
 
       <div class="form-group">
         <label>To:</label>
@@ -33,21 +27,15 @@
                name="to"
                class="form-control"
                required="required"
-               minlength="3"
-               maxlength="15"
+               [minlength]="minLength"
+               [maxlength]="maxLength"
                pattern="[a-zA-ZäöüÄÖÜß ]*">
       </div>
 
-      <div *ngIf="flightSearchForm.controls['to']?.invalid"> To is invalid. </div>
-
-      <div *ngIf="flightSearchForm.controls['to']?.hasError('required')"> To is required. </div>
-
-      <div *ngIf="flightSearchForm.controls['to']?.hasError('minlength')"> To minlength is 3. </div>
-
-      <div *ngIf="flightSearchForm.controls['to']?.hasError('maxlength')"> To maxlength is 15. </div>
-
-      <div *ngIf="flightSearchForm.controls['to']?.hasError('pattern')"> To has invalid input. </div>
-
+      <app-flight-validation-errors *ngIf="flightSearchForm.controls['to']"
+                                    [errors]="flightSearchForm.controls['to'].errors"
+                                    fieldLabel="To" />
+      
       <div class="form-group">
         <button
           [disabled]="!to || !from || flightSearchForm.invalid"
