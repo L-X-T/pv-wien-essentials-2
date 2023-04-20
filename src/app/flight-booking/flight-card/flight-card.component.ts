@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, NgZone, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 
 import { Flight } from '../../entities/flight';
 
@@ -13,7 +13,10 @@ export class FlightCardComponent implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) item!: Flight;
   @Input() isSelected = false;
 
-  constructor() {
+  constructor(
+    private element: ElementRef,
+    private zone: NgZone
+  ) {
     if (this.debug) {
       console.warn('[FlightCardComponent - constructor()]');
       console.log(this.item);
@@ -41,5 +44,18 @@ export class FlightCardComponent implements OnInit, OnChanges, OnDestroy {
       console.error('[FlightCardComponent - ngOnDestroy()]');
       console.log(this.item);
     }
+  }
+
+  blink(): void {
+    // Dirty Hack used to visualize the change detector
+    // let originalColor = this.element.nativeElement.firstChild.style.backgroundColor;
+    this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+    //              ^----- DOM-Element
+
+    this.zone.runOutsideAngular(() => {
+      setTimeout(() => {
+        this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+      }, 1000);
+    });
   }
 }
