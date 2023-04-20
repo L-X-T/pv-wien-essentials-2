@@ -6,6 +6,7 @@ import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 import { Flight } from '../../entities/flight';
 import { FlightService } from '../flight-search/flight.service';
 import { validateCity } from '../shared/validation/city-validator';
+import { validateAsyncCity } from '../shared/validation/async-city-validator';
 
 @Component({
   selector: 'app-flight-edit',
@@ -26,6 +27,7 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
     from: [
       '',
       {
+        asyncValidators: [validateAsyncCity(this.flightService)],
         validators: [
           Validators.required,
           Validators.minLength(3),

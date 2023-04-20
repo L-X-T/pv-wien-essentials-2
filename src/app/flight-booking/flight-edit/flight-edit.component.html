@@ -13,6 +13,8 @@
     <input formControlName="from" class="form-control">
   </div>
 
+  <div *ngIf="editForm.controls['from']?.pending" class="text-warning">Checking city ...</div>
+
   <app-flight-validation-errors *ngIf="editForm.controls['from']?.dirty"
                                 fieldLabel="From"
                                 [errors]="editForm.controls['from'].errors" />
