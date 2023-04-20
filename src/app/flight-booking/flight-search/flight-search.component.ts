@@ -48,7 +48,9 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
     const flightsObserver: Observer<Flight[]> = {
       next: (flights) => (this.flights = flights),
       error: (errResp) => console.error('Error loading flights', errResp),
-      complete: () => console.warn('complete')
+      complete: () => {
+        // console.warn('complete');
+      }
     };
 
     // 3a. my subscription
