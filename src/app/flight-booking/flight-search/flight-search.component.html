@@ -154,6 +154,7 @@
           {{ basket[f.id] ? 'Rem.' : 'Add' }}
         </button>
         <app-flight-status-toggle style="margin-left: 10px" [(isDelayed)]="f.delayed"></app-flight-status-toggle>
+        <button class="btn btn-default" (click)="flightToEdit = f">Edit</button>
       </ng-container>
     </app-flight-card>
   </div>
@@ -166,7 +167,7 @@
 </div>
 
 <!--<div *ngIf="selectedFlight" id="selectedFlight">-->
-<ng-container *ngIf="selectedFlight">
+<!--<ng-container *ngIf="selectedFlight">
   <div>
     {{ message }}
   </div>
@@ -192,4 +193,6 @@
   </div>
 
   <button (click)="save()" class="btn btn-default">Save</button>
-</ng-container>
+</ng-container>-->
+
+<app-flight-edit [flight]="flightToEdit" />
