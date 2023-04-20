@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute, Params } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
 
@@ -11,6 +11,7 @@ import { validateCity } from '../shared/validation/city-validator';
 import { validateAsyncCity } from '../shared/validation/async-city-validator';
 import { validateRoundTrip } from '../shared/validation/round-trip-validator';
 import { pattern } from '../../shared/global';
+import { delay } from 'rxjs/operators';
 
 @Component({
   selector: 'app-flight-edit',
@@ -83,7 +84,9 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
 
   constructor(
     private fb: FormBuilder,
-    private flightService: FlightService
+    private flightService: FlightService,
+    private route: ActivatedRoute,
+    private router: Router
   ) {}
 
   ngOnChanges(): void {
@@ -111,25 +114,32 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   }
 
   save(): void {
-    this.saveFlightSubscription = this.flightService.save(this.editForm.value).subscribe({
-      next: (flight) => {
-        if (this.debug) {
-          console.log('saved flight:', flight);
-        }
+    this.message = 'Is saving ...';
 
-        this.flightChange.emit(flight);
-        this.flight = flight;
-        this.message = 'Success saving!';
-        this.patchFormValue();
-      },
-      error: (err: HttpErrorResponse) => {
-        if (this.debug) {
-          console.error('Error', err);
-        }
+    this.saveFlightSubscription = this.flightService
+      .save(this.editForm.value)
+      .pipe(delay(3000))
+      .subscribe({
+        next: (flight) => {
+          if (this.debug) {
+            console.log('saved flight:', flight);
+          }
 
-        this.message = 'Error saving!';
-      }
-    });
+          this.flightChange.emit(flight);
+          this.flight = flight;
+          this.message = 'Success saving!';
+          this.patchFormValue();
+
+          setTimeout(() => this.router.navigate(['/flight-search']), 3000);
+        },
+        error: (err: HttpErrorResponse) => {
+          if (this.debug) {
+            console.error('Error', err);
+          }
+
+          this.message = 'Error saving!';
+        }
+      });
   }
 
   private patchFormValue(): void {
