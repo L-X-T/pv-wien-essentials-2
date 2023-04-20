@@ -123,4 +123,13 @@ export class FlightSearchComponent implements OnInit, OnDestroy {
   removeSecondFlight() {
     this.flights = [{ ...this.flights[0] }, ...this.flights.slice(2)];
   }
+
+  updateFlight(updatedFlight: Flight): void {
+    // console.warn('FlightSearchComponent - updateFlight()');
+    // console.log(updatedFlight);
+
+    this.flights = this.flights.map((flight) => (flight.id === updatedFlight.id ? updatedFlight : flight));
+
+    this.search(); // to update the results
+  }
 }

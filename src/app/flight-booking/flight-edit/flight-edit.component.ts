@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, Subscription } from 'rxjs';
@@ -16,6 +16,7 @@ import { validateRoundTrip } from '../shared/validation/round-trip-validator';
 })
 export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   @Input() flight: Flight | undefined | null;
+  @Output() flightChange = new EventEmitter<Flight>();
 
   editForm: FormGroup = this.fb.group(
     {
@@ -99,6 +100,10 @@ export class FlightEditComponent implements OnChanges, OnInit, OnDestroy {
   save(): void {
     this.saveFlightSubscription = this.flightService.save(this.editForm.value).subscribe({
       next: (flight) => {
+        console.log('saved flight:', flight);
+
+        this.flightChange.emit(flight);
+
         this.message = 'Success!';
       },
       error: (err: HttpErrorResponse) => {
