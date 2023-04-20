@@ -12,4 +12,6 @@
   <div *ngIf="errors['city']" class="text-danger">
     {{ fieldLabel }} is "{{ errors['city'].actualCity }}" but should be a city of "{{ errors['city'].validCities }}".
   </div>
+
+  <div *ngIf="errors['asyncCity']" class="text-danger">No flight starting from "{{ errors['asyncCity'] }}".</div>
 </ng-container>
