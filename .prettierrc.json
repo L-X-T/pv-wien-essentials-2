@@ -1,12 +1,7 @@
 {
-  "arrowParens": "always",
-  "bracketSpacing": true,
   "printWidth": 140,
-  "quoteProps": "as-needed",
   "singleQuote": true,
-  "tabWidth": 2,
   "trailingComma": "none",
-  "useTabs": false,
   "endOfLine": "auto",
   "overrides": [
     {
@@ -22,9 +17,27 @@
       }
     },
     {
+      "files": ["*.js"],
+      "options": {
+        "parser": "javascript"
+      }
+    },
+    {
       "files": ["*.json"],
       "options": {
         "parser": "json"
+      }
+    },
+    {
+      "files": ["*.md"],
+      "options": {
+        "parser": "markdown"
+      }
+    },
+    {
+      "files": ["*.mdx"],
+      "options": {
+        "parser": "mdx"
       }
     },
     {

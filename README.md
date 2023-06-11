@@ -1,6 +1,6 @@
 # Angular Architects - Essentials Workshop
 
-This project was re-generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.4, by [Alex T.](https://alex.thalhammer.name) and is based upon work by Manfred Steyer.
+This project was generated with the [Angular CLI](https://github.com/angular/angular-cli) version 11.0.2 by [@Manfred Steyer](https://twitter.com/ManfredSteyer) and has since been improved and update by [@LX_T](https://twitter.com/LX_T), currently using Angular V16.
 
 ## Slides
 
