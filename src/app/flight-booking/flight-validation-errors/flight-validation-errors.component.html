@@ -14,4 +14,6 @@
   </div>
 
   <div *ngIf="errors['asyncCity']" class="text-danger">No flight starting from "{{ errors['asyncCity'] }}".</div>
+
+  <div *ngIf="errors['roundTrip']" class="text-danger">Round trips are not allowed!.</div>
 </ng-container>
