@@ -1,8 +1,9 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, DestroyRef, inject, OnDestroy } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { Flight } from '../entities/flight';
 import { FlightService } from './flight.service';
-import { Observable, Observer, Subject, Subscription } from 'rxjs';
+import { Observable, Observer, pipe, Subject, Subscription } from 'rxjs';
 import { share, takeUntil } from 'rxjs/operators';
 
 @Component({
@@ -22,10 +23,11 @@ export class FlightSearchComponent implements OnDestroy {
 
   message = '';
 
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly flightService = inject(FlightService);
+
   private readonly onDestroySubject = new Subject<void>();
   readonly terminator$ = this.onDestroySubject.asObservable();
-
-  constructor(private flightService: FlightService) {}
 
   search(): void {
     // 1. my observable
@@ -39,16 +41,19 @@ export class FlightSearchComponent implements OnDestroy {
     };
 
     // 3a. my subscription
-    // this.flightsSubscription?.unsubscribe();
-    // this.flightsSubscription = this.flights$.subscribe(flightsObserver);
+    this.flightsSubscription?.unsubscribe();
+    this.flightsSubscription = this.flights$.subscribe(flightsObserver);
 
     // 3b. takeUntil terminator$ emits
     this.flights$.pipe(takeUntil(this.terminator$)).subscribe(flightsObserver);
+
+    // 3c. takeUntilDestroyed
+    this.flights$.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(flightsObserver);
   }
 
   ngOnDestroy(): void {
     // 4a. my unsubscribe
-    // this.flightsSubscription?.unsubscribe();
+    this.flightsSubscription?.unsubscribe();
 
     // 4b. subject emit thru terminator$
     this.onDestroySubject.next(void 0);
@@ -61,16 +66,19 @@ export class FlightSearchComponent implements OnDestroy {
 
   save(): void {
     if (this.selectedFlight) {
-      this.flightService.save(this.selectedFlight).subscribe({
-        next: (flight) => {
-          this.selectedFlight = flight;
-          this.message = 'Success!';
-        },
-        error: (errResponse) => {
-          console.error('Error', errResponse);
-          this.message = 'Error!';
-        }
-      });
+      this.flightService
+        .save(this.selectedFlight)
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe({
+          next: (flight) => {
+            this.selectedFlight = flight;
+            this.message = 'Success!';
+          },
+          error: (errResponse) => {
+            console.error('Error', errResponse);
+            this.message = 'Error!';
+          }
+        });
     }
   }
 }

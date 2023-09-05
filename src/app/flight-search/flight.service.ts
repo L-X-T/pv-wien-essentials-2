@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
@@ -12,7 +12,7 @@ export class FlightService {
 
   headers = new HttpHeaders().set('Accept', 'application/json');
 
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
 
   find(from: string, to: string): Observable<Flight[]> {
     const params = new HttpParams().set('from', from).set('to', to);
