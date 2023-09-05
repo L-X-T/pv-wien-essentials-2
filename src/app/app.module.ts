@@ -8,8 +8,8 @@ import { SidebarComponent } from './sidebar/sidebar.component';
 import { FlightSearchComponent } from './flight-search/flight-search.component';
 
 @NgModule({
-  imports: [BrowserModule, HttpClientModule, FlightSearchComponent],
-  declarations: [AppComponent, SidebarComponent, NavbarComponent],
-  bootstrap: [AppComponent]
+    imports: [BrowserModule, HttpClientModule, FlightSearchComponent, SidebarComponent, NavbarComponent],
+    declarations: [AppComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule {}
