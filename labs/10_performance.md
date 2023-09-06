@@ -1,13 +1,13 @@
 # Performance
 
-* [Performance](#performance)
-  * [Lazy Loading](#lazy-loading)
-    * [Implementing Lazy Loading for a feature module](#implementing-lazy-loading-for-a-feature-module)
-    * [Implementing Preloading](#implementing-preloading)
-    * [Bonus: Implementing a Custom Preloading Strategy **](#bonus-implementing-a-custom-preloading-strategy-)
-  * [Improving Data Binding Performance with OnPush](#improving-data-binding-performance-with-onpush)
-  * [Improving Startup Performance with Prod-Mode](#improving-startup-performance-with-prod-mode)
-  * [Bonus: Inspecting Bundles with webpack-bundle-analyzer](#bonus-inspecting-bundles-with-webpack-bundle-analyzer)
+- [Performance](#performance)
+  - [Lazy Loading](#lazy-loading)
+    - [Implementing Lazy Loading for a feature module](#implementing-lazy-loading-for-a-feature-module)
+    - [Implementing Preloading](#implementing-preloading)
+    - [Bonus: Implementing a Custom Preloading Strategy \*\*](#bonus-implementing-a-custom-preloading-strategy-)
+  - [Improving Data Binding Performance with OnPush](#improving-data-binding-performance-with-onpush)
+  - [Improving Startup Performance with Prod-Mode](#improving-startup-performance-with-prod-mode)
+  - [Bonus: Inspecting Bundles with webpack-bundle-analyzer](#bonus-inspecting-bundles-with-webpack-bundle-analyzer)
 
 ## Lazy Loading
 
@@ -18,63 +18,58 @@ Keep in mind that lazy loading only works if the module in question isn't refere
 
 1. Open the file `app.module.ts` and remove the import for the `FlightBookingModule`.
 
-    <details>
-    <summary>Show Code</summary>
-    <p>
+   <details>
+   <summary>Show Code</summary>
+   <p>
 
-    ```typescript
-    @NgModule({
-      imports: [
-        [...]
-        // FlightBookingModule,
-        // ^^ Removed b/c this would prevent lazy loading
-        [...]
-      ],
-      [...]        
-    })
-    export class AppModule {}
-    ```
+   ```typescript
+   @NgModule({
+     imports: [
+       [...]
+       // FlightBookingModule,
+       // ^^ Removed b/c this would prevent lazy loading
+       [...]
+     ],
+     [...]
+   })
+   export class AppModule {}
+   ```
 
-    </p>
-    </details>
+   </p>
+   </details>
 
-2. Since Angular 8, we are using EcmaScript inline imports for lazy loading. To make them work, you have to adjust your ``tsconfig.app.json`` (in ``flight-app``):
+2. Open the file `app.routes.ts` and introduce a route with the path `flight-booking`.
+   It should point to the `FlightBookingModule` using `loadChildren`:
 
-    - Here, make sure, ``module`` is set to ``esnext``.
-    - This might also be set in the (included) root folder's ``tsconfig.base.json``.
+   <details>
+   <summary>Show Code</summary>
+   <p>
 
-3. Open the file `app.routes.ts` and introduce a route with the path `flight-booking`.
-    It should point to the `FlightBookingModule` using `loadChildren`:
+   ```typescript
+   [...]
+   {
+     path: 'flight-booking',
+     loadChildren: () => import('./flight-booking/flight-booking.module').then(m => m.FlightBookingModule)
+   },
+   {
+     // This route needs to be the last one!
+     path: '**',
+     [...]
+   }
+   [...]
+   ```
 
-    <details>
-    <summary>Show Code</summary>
-    <p>
+   </p>
+   </details>
 
-    ```typescript
-    [...]
-    {
-      path: 'flight-booking',
-      loadChildren: () => import('./flight-booking/flight-booking.module').then(m => m.FlightBookingModule)
-    },
-    {
-      // This route needs to be the last one!
-      path: '**',
-      [...]
-    }
-    [...]
-    ```
+3. Make sure your sidebar link to flight-search and passenger-search still works (something like `routerLink="/flight-booking/flight-search"`).
 
-    </p>
-    </details>
+4. Also make sure your `Edit` Button in your `FlightCardComponent` still works (try adding two dots like `[routerLink]="['../flight-edit', ...`).
 
-4. Make sure your sidebar link to flight-search and passenger-search still works (something like `routerLink="/flight-booking/flight-search"`).
+5. Find out that webpack splits off an own chunk for the `FlightBookingModule` after implementing lazy loading.
+   If this works, you will see another chunk at the console (e. g. `flight-booking-flight-booking-module.js` depending on the used version of the CLI)
 
-5. Also make sure your `Edit` Button in your `FlightCardComponent` still works (try adding two dots like `[routerLink]="['../flight-edit', ...`).
-
-6. Find out that webpack splits off an own chunk for the `FlightBookingModule` after implementing lazy loading.
-   If this works, you will see another chunk at the console (e. g.  `flight-booking-flight-booking-module.js` depending on the used version of the CLI)
-
-7. Try it out in the browser and use the network tab within the dev tools (F12) to make sure that it is only loaded on demand.
+6. Try it out in the browser and use the network tab within the dev tools (F12) to make sure that it is only loaded on demand.
    If it doesn't work, have a look to the console tab within the dev tools.
 
 ### Implementing Preloading
@@ -83,22 +78,22 @@ In this exercise you will implement Preloading using Angular's `PreloadAllModule
 
 1. Open the file `app.module.ts` and register the `PreloadAllModules` strategy when calling `RouterModule.forRoot`.
 
-    <details>
-    <summary>Show Code</summary>
-    <p>
+   <details>
+   <summary>Show Code</summary>
+   <p>
 
-    ```typescript
-    RouterModule.forRoot(APP_ROUTES, {
-      preloadingStrategy: PreloadAllModules
-    });
-    ```
+   ```typescript
+   RouterModule.forRoot(APP_ROUTES, {
+     preloadingStrategy: PreloadAllModules
+   });
+   ```
 
-    </p>
-    </details>
+   </p>
+   </details>
 
 2. Make sure it works using the network tab within Chrome's dev tools. If it works, the lazy bundles are loaded **after** the app has been initializes. If this is the case, the chunks show up quite late in the water fall diagram.
 
-### Bonus: Implementing a Custom Preloading Strategy **
+### Bonus: Implementing a Custom Preloading Strategy \*\*
 
 1. [Here](https://www.angulararchitects.io/aktuelles/performanceoptimierung/) you find some information about creating a custom preloading strategy. Have a look at it.
 
@@ -108,54 +103,57 @@ In this exercise you will implement Preloading using Angular's `PreloadAllModule
 
 ## Improving Data Binding Performance with OnPush
 
-1. Open the file `flight-search.component.ts` and add this method ``delayFirstFlight`` which you bind to the new button with the label `Delay 1st Flight` in the HTML Template.
+1. Open the file `flight-search.component.ts` and add this method `delayFirstFlight` which you bind to the new button with the label `Delay 1st Flight` in the HTML Template.
 
-    ```typescript
-    delay(): void {
-      const ONE_MINUTE = 1000 * 60;
-      const oldFlights = this.flights;
-      const oldFlight = oldFlights[0];
-      const oldDate = new Date(oldFlight.date);
+   ```typescript
+   delay(): void {
+     const ONE_MINUTE = 1000 * 60;
+     const oldFlights = this.flights;
+     const oldFlight = oldFlights[0];
+     const oldDate = new Date(oldFlight.date);
 
-      // Mutable
-      oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
-      oldFlight.date = oldDate.toISOString();
-    }
-    ```
+     // Mutable
+     oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE);
+     oldFlight.date = oldDate.toISOString();
+   }
+   ```
 
-    ```html
-        [...]
-          Search
-        </button>
+   ```html
+       [...]
+         Search
+       </button>
 
-        <button *ngIf="flights.length > 0" class="btn btn-default" style="margin-left: 10px" (click)="delayFirstFlight()">
-          Delay 1st Flight
-        </button>
-      </div>
-      [...]
-    ```
+       <button *ngIf="flights.length > 0" class="btn btn-default" style="margin-left: 10px" (click)="delayFirstFlight()">
+         Delay 1st Flight
+       </button>
+     </div>
+     [...]
+   ```
+
 2. Now open the file `flight-card.component.ts` inject this in your constructor: `constructor(private element: ElementRef, private zone: NgZone) {}` (make sure the imports are added correctly) and then add this `blink` method to your component.
 
-    ```typescript
-    blink(): void {
-      // Dirty Hack used to visualize the change detector
-      // let originalColor = this.element.nativeElement.firstChild.style.backgroundColor;
-      this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
-      //              ^----- DOM-Element
+   ```typescript
+   blink(): void {
+     // Dirty Hack used to visualize the change detector
+     // let originalColor = this.element.nativeElement.firstChild.style.backgroundColor;
+     this.element.nativeElement.firstChild.style.backgroundColor = 'crimson';
+     //              ^----- DOM-Element
 
-      this.ngZone.runOutsideAngular(() => {
-        setTimeout(() => {
-          this.element.nativeElement.firstChild.style.backgroundColor = 'white';
-        }, 1000);
-      });
-    }
-    ```
+     this.ngZone.runOutsideAngular(() => {
+       setTimeout(() => {
+         this.element.nativeElement.firstChild.style.backgroundColor = 'white';
+       }, 1000);
+     });
+   }
+   ```
 
 3. Move to the file `flight-card.component.html` and create a data binding for this method at the end:
-    ```
-    {{ blink() }}
-    ```
-    Please note that binding methods is not a good idea with respect to performance. We do it here just to visualize the change tracker.
+
+   ```
+   {{ blink() }}
+   ```
+
+   Please note that binding methods is not a good idea with respect to performance. We do it here just to visualize the change tracker.
 
 4. Open the solution in the browser and search for flights form `Hamburg` to `Graz`.
 
@@ -163,51 +161,51 @@ In this exercise you will implement Preloading using Angular's `PreloadAllModule
 
 6. Open the file `flight-card.component.ts`. Switch on `OnPush` for your `FlightCard`.
 
-    <details>
-    <summary>Show Code</summary>
-    <p>
+   <details>
+   <summary>Show Code</summary>
+   <p>
 
-    ```typescript
+   ```typescript
 
-    import {ChangeDetectionStrategy} from '@angular/core';
-    [...]
-    @Component({
-      selector: 'app-flight-card',
-      templateUrl: 'flight-card.component.html',
-      changeDetection: ChangeDetectionStrategy.OnPush
-    })
-    export class FlightCardComponent {
-      [...]
-    }
-    ```
+   import {ChangeDetectionStrategy} from '@angular/core';
+   [...]
+   @Component({
+     selector: 'app-flight-card',
+     templateUrl: 'flight-card.component.html',
+     changeDetection: ChangeDetectionStrategy.OnPush
+   })
+   export class FlightCardComponent {
+     [...]
+   }
+   ```
 
-    </p>
-    </details>
+   </p>
+   </details>
 
-7. Open the `flight-search.component.ts` and alter it to update the selected flight's date in an *immutable* way:
+7. Open the `flight-search.component.ts` and alter it to update the selected flight's date in an _immutable_ way:
 
-    <details>
-    <summary>Show Code</summary>
-    <p>
+   <details>
+   <summary>Show Code</summary>
+   <p>
 
-    ```typescript    
-    delay(): void {
-      const ONE_MINUTE = 1000 * 60;
+   ```typescript
+   delay(): void {
+     const ONE_MINUTE = 1000 * 60;
 
-      const oldFlights = this.flights;
-      const oldFlight = oldFlights[0];
-      const oldDate = new Date(oldFlight.date);
+     const oldFlights = this.flights;
+     const oldFlight = oldFlights[0];
+     const oldDate = new Date(oldFlight.date);
 
-      // Mutable
-      // oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE );
-      // oldFlight.date = oldDate.toISOString();
+     // Mutable
+     // oldDate.setTime(oldDate.getTime() + 15 * ONE_MINUTE );
+     // oldFlight.date = oldDate.toISOString();
 
-      // Immutable
-      const newDate = new Date(oldDate.getTime() + 15 * ONE_MINUTE);
-      const newFlight: Flight = { ...oldFlight, date: newDate.toISOString() };
-      this.flights = [ newFlight, ...oldFlights.slice(1) ];
-    }
-    ```
+     // Immutable
+     const newDate = new Date(oldDate.getTime() + 15 * ONE_MINUTE);
+     const newFlight: Flight = { ...oldFlight, date: newDate.toISOString() };
+     this.flights = [ newFlight, ...oldFlights.slice(1) ];
+   }
+   ```
 
 </p>
 </details>
@@ -218,44 +216,42 @@ You find some information about the object spread operator (e. g. `...oldFlight`
 
 ## Improving Startup Performance with Prod-Mode
 
-
-1. Make sure, your solution runs in debug mode (``ng serve -o``)
+1. Make sure, your solution runs in debug mode (`ng serve -o`)
 
 1. Open the performance tab in Chrome's dev tools and reload the app. Find out how long bootstrapping takes and create a screenshot.
 
-    **Hint:** In order to respect the cache, do it twice and take the screenshot after the 2nd try.
-
+   **Hint:** In order to respect the cache, do it twice and take the screenshot after the 2nd try.
 
 1. Install the simple web server serve:
 
-    ```
-    npm install serve -g
-    ```
+   ```
+   npm install serve -g
+   ```
 
-2. Switch to the console and move to the root folder of your project. Create a production build:
+1. Switch to the console and move to the root folder of your project. Create a production build:
 
-    ```
-    ng build --prod
-    ```
+   ```
+   ng build --prod
+   ```
 
-3. Start live-server for your production build. For this, switch to your project within the ``dist`` folder and call serve:
+1. Start live-server for your production build. For this, switch to your project within the `dist` folder and call serve:
 
-    ```
-    serve -s
-    ```
+   ```
+   serve -s
+   ```
 
-4. Open the performance tab in Chrome's dev tools and reload the app. Find out how long bootstrapping takes and create a screenshot.
+1. Open the performance tab in Chrome's dev tools and reload the app. Find out how long bootstrapping takes and create a screenshot.
 
-    **Hint:** In order to respect the cache, do it twice and take the screenshot after the 2nd try.
+   **Hint:** In order to respect the cache, do it twice and take the screenshot after the 2nd try.
 
-5. Compare your screenshot with the performance results.
-
+1. Compare your screenshot with the performance results.
 
 ## Bonus: Inspecting Bundles with webpack-bundle-analyzer
 
 Using the webpack-bundle-analyzer one can have a look at a bundle's content. In this exercise you will use this possibility by inspecting your AOT-based and your AOT-less production build.
 
 1. Install the `webpack-bundle-analyzer` globally (for the sake of simplicity):
+
    ```
    npm install -g webpack
    npm install -g webpack-bundle-analyzer
@@ -263,29 +259,30 @@ Using the webpack-bundle-analyzer one can have a look at a bundle's content. In 
 
 1. Move to the root folder of your project. Create a Production Build without AOT and generate a statistics file for the analyzer using the `stats-json` flag:
 
-    ```
-    ng build --prod --aot=false --build-optimizer=false --stats-json
-    ```
+   ```
+   ng build --prod --aot=false --build-optimizer=false --stats-json
+   ```
 
-3. Analyze your bundles:
-    ```
-    cd dist/flight-app
-    webpack-bundle-analyzer stats.json
-    ```
+1. Analyze your bundles:
 
-    The name of ``stats.json`` can be slightly different on your machine, e. g. ``stats-es5.json`` or ``stats-es2015.json``.
+   ```
+   cd dist/flight-app
+   webpack-bundle-analyzer stats.json
+   ```
 
-4. Take a screenshot to document this.
+   The name of `stats.json` can be slightly different on your machine, e. g. `stats-es5.json` or `stats-es2015.json`.
 
-5. Move to the root folder of your project. Create a production build using AOT:
+1. Take a screenshot to document this.
 
-    ```
-    ng build --prod --stats-json
-    ```
+1. Move to the root folder of your project. Create a production build using AOT:
 
-6. Analyze these bundles too and compare it to the former bundles:
+   ```
+   ng build --prod --stats-json
+   ```
 
-    ```
-    cd dist/flight-app
-    webpack-bundle-analyzer stats.json
-    ```
+1. Analyze these bundles too and compare it to the former bundles:
+
+   ```
+   cd dist/flight-app
+   webpack-bundle-analyzer stats.json
+   ```
